@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -38,7 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * endpoint test case for Auth controller class
- * 
+ *
  * @author Febri_MW251
  *
  */
@@ -46,221 +45,215 @@ import org.springframework.beans.factory.annotation.Value;
 @SpringBootTest
 public class AuthControllerTest {
 
-	/**
-	 * get base url from config application.properties
-	 */
-	@Value("${spring.data.rest.basePath}")
-	private String baseUrl;
+    /**
+     * get base url from config application.properties
+     */
+    @Value("${spring.data.rest.basePath}")
+    private String baseUrl;
 
-	/**
-	 * mock mvc
-	 */
-	private MockMvc mvc;
+    /**
+     * mock mvc
+     */
+    private MockMvc mvc;
 
-	/**
-	 * WebApplicationContext variable
-	 */
-	@Autowired
-	private WebApplicationContext context;
+    /**
+     * WebApplicationContext variable
+     */
+    @Autowired
+    private WebApplicationContext context;
 
-	/**
-	 * set AuthenticationManager variable
-	 */
-	@MockBean
-	private AuthenticationManager authenticationManager;
+    /**
+     * set AuthenticationManager variable
+     */
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
-	/**
-	 * UserRepository variable
-	 */
-	@MockBean
-	private UserRepository userRepositoryMock;
+    /**
+     * UserRepository variable
+     */
+    @MockBean
+    private UserRepository userRepositoryMock;
 
-	/**
-	 * UserRepository variable
-	 */
-	@MockBean
-	private RoleRepository roleRepositoryMock;
+    /**
+     * UserRepository variable
+     */
+    @MockBean
+    private RoleRepository roleRepositoryMock;
 
-	/**
-	 * JwtTokenProvider variable
-	 */
-	@MockBean
-	private JwtTokenProvider tokenProvider;
+    /**
+     * JwtTokenProvider variable
+     */
+    @MockBean
+    private JwtTokenProvider tokenProvider;
 
-	/**
-	 * UserService variable
-	 */
-	@MockBean
-	private UserService userServiceMock;
+    /**
+     * UserService variable
+     */
+    @MockBean
+    private UserService userServiceMock;
 
-	/**
-	 * passwordEncoder variable
-	 */
-	@MockBean
-	private PasswordEncoder passwordEncoderMock;
+    /**
+     * passwordEncoder variable
+     */
+    @MockBean
+    private PasswordEncoder passwordEncoderMock;
 
-	/**
-	 * setup to intialize default variable value
-	 */
-	@Before
-	public void setup() {
-		mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-	}
+    /**
+     * setup to intialize default variable value
+     */
+    @Before
+    public void setup() {
+        mvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
+    }
 
-	/**
-	 * dummy register object
-	 * 
-	 * @return SignUpRequest object dummy
-	 */
-	private SignUpRequest dummyRegisterUser() {
-		SignUpRequest singupRequest = new SignUpRequest();
-		singupRequest.setName("chicken black");
-		singupRequest.setUserName("chicken");
-		singupRequest.setEmail("chicken@kremes.com");
-		singupRequest.setPassword("everydayisholiday");
-		return singupRequest;
-	}
+    /**
+     * dummy register object
+     *
+     * @return SignUpRequest object dummy
+     */
+    private SignUpRequest dummyRegisterUser() {
+        SignUpRequest singupRequest = new SignUpRequest();
+        singupRequest.setName("chicken black");
+        singupRequest.setUserName("chicken");
+        singupRequest.setEmail("chicken@kremes.com");
+        singupRequest.setPassword("everydayisholiday");
+        return singupRequest;
+    }
 
-	/**
-	 * singin path test with successfully login into system
-	 * 
-	 * @throws Exception
-	 *             throwing exception if there is an error
-	 */
-	@Test
-	@WithAnonymousUser
-	public void singinSuccessfullyTest() throws Exception {
+    /**
+     * singin path test with successfully login into system
+     *
+     * @throws Exception throwing exception if there is an error
+     */
+    @Test
+    @WithAnonymousUser
+    public void singinSuccessfullyTest() throws Exception {
 
-		LoginRequest loginRequest = new LoginRequest("cakpep", "cakpep");
+        LoginRequest loginRequest = new LoginRequest("giveMeRandomString", "giveMeRandomPassword");
 
-		Authentication authentication = authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsernameOrEmail(),
                         loginRequest.getPassword()
                 )
         );
 
-		given(tokenProvider.generateToken(authentication)).willReturn("xxxx");
+        given(tokenProvider.generateToken(authentication)).willReturn("xxxx");
 
-		RequestBuilder requestBuilder = post(this.baseUrl + "/signin").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(loginRequest));
+        RequestBuilder requestBuilder = post(this.baseUrl + "/signin").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(loginRequest));
 
-		// expected 200 return http code
-		mvc.perform(requestBuilder).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.accessToken").exists())
-				.andExpect(jsonPath("$.accessToken").isString()).andExpect(jsonPath("$.accessToken").value("xxxx"))
-				.andExpect(jsonPath("$.tokenType").exists()).andExpect(jsonPath("$.tokenType").isString())
-				.andExpect(jsonPath("$.tokenType").value("Bearer"));
-	}
+        // expected 200 return http code
+        mvc.perform(requestBuilder).andExpect(status().is2xxSuccessful()).andExpect(jsonPath("$.accessToken").exists())
+                .andExpect(jsonPath("$.accessToken").isString()).andExpect(jsonPath("$.accessToken").value("xxxx"))
+                .andExpect(jsonPath("$.tokenType").exists()).andExpect(jsonPath("$.tokenType").isString())
+                .andExpect(jsonPath("$.tokenType").value("Bearer"));
+    }
 
-	/**
-	 * singin path test with not successfully login into system
-	 * 
-	 * @throws Exception
-	 *             throwing exception if there is an error
-	 */
-	@Test
-	@WithAnonymousUser
-	public void singinNotSuccessfullyTest() throws Exception {
+    /**
+     * singin path test with not successfully login into system
+     *
+     * @throws Exception throwing exception if there is an error
+     */
+    @Test
+    @WithAnonymousUser
+    public void singinNotSuccessfullyTest() throws Exception {
 
-		LoginRequest loginRequest = new LoginRequest("cakpep", "cakpep");
+        LoginRequest loginRequest = new LoginRequest("cakpep", "cakpep");
 
-		given(authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())))
-						.willThrow(new RuntimeException("Bad credentials"));
+        given(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsernameOrEmail(), loginRequest.getPassword())))
+                .willThrow(new RuntimeException("Bad credentials"));
 
-		RequestBuilder requestBuilder = post(this.baseUrl + "/signin").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(loginRequest));
+        RequestBuilder requestBuilder = post(this.baseUrl + "/signin").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(loginRequest));
 
-		// expected 500 return http code
-		mvc.perform(requestBuilder).andExpect(status().is(500)).andExpect(jsonPath("$.success").exists())
-				.andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
-				.andExpect(jsonPath("$.message").exists()).andExpect(jsonPath("$.message").isString())
-				.andExpect(jsonPath("$.message").value("Bad credentials"));
-	}
+        // expected 500 return http code
+        mvc.perform(requestBuilder).andExpect(status().is(404)).andExpect(jsonPath("$.success").exists())
+                .andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").exists()).andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.message").value("Bad credentials"));
+    }
 
-	/**
-	 * singup path test test with successfully register
-	 * 
-	 * @throws Exception
-	 *             throwing exception if there is an error
-	 */
-	@Test
-	@WithAnonymousUser
-	public void singUpUserRegisterSuccessfullyTest() throws Exception {
+    /**
+     * singup path test test with successfully register
+     *
+     * @throws Exception throwing exception if there is an error
+     */
+    @Test
+    @WithAnonymousUser
+    public void singUpUserRegisterSuccessfullyTest() throws Exception {
 
-		SignUpRequest singupRequest = this.dummyRegisterUser();
+        SignUpRequest singupRequest = this.dummyRegisterUser();
 
-		User user = new User(singupRequest.getName(), singupRequest.getUserName(), singupRequest.getEmail(),
-				singupRequest.getPassword());
-		user.setId(1L);
+        User user = new User(singupRequest.getName(), singupRequest.getUserName(), singupRequest.getEmail(),
+                singupRequest.getPassword());
+        user.setId(1L);
 
-		given(userServiceMock.existsByUserName(singupRequest.getUserName())).willReturn(false);
-		given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(false);
+        given(userServiceMock.existsByUserName(singupRequest.getUserName())).willReturn(false);
+        given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(false);
 
-		given(roleRepositoryMock.findByRoleName("ROLE_STAFF")).willReturn(new Role(1, "ROLE_STAFF"));
+        given(roleRepositoryMock.findByRoleName("ROLE_STAFF")).willReturn(new Role(1, "ROLE_STAFF"));
 
-		given(passwordEncoderMock.encode(user.getPassword())).willReturn("xxx");
-		given(userRepositoryMock.save(user)).willReturn(user);
+        given(passwordEncoderMock.encode(user.getPassword())).willReturn("xxx");
+        given(userRepositoryMock.save(user)).willReturn(user);
 
-		// request to endpoint
-		RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(singupRequest));
+        // request to endpoint
+        RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(singupRequest));
 
-		// expected 200 return http code
-		mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
-				.andExpect(jsonPath("$.message").value("User registered successfully"))
-				.andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(true))
-				.andExpect(status().is2xxSuccessful());
-	}
+        // expected 200 return http code
+        mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.message").value("User registered successfully"))
+                .andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(true))
+                .andExpect(status().is2xxSuccessful());
+    }
 
-	/**
-	 * singup path test test with Email Address already in use!
-	 * 
-	 * @throws Exception
-	 *             throwing exception if there is an error
-	 */
-	@Test
-	@WithAnonymousUser
-	public void singUpUserRegisterExistByEmailTest() throws Exception {
+    /**
+     * singup path test test with Email Address already in use!
+     *
+     * @throws Exception throwing exception if there is an error
+     */
+    @Test
+    @WithAnonymousUser
+    public void singUpUserRegisterExistByEmailTest() throws Exception {
 
-		SignUpRequest singupRequest = this.dummyRegisterUser();
+        SignUpRequest singupRequest = this.dummyRegisterUser();
 
-		given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(true);
+        given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(true);
 
-		// request to endpoint
-		RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(singupRequest));
+        // request to endpoint
+        RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(singupRequest));
 
-		// expected 400 return http code
-		mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
-				.andExpect(jsonPath("$.message").value("Email Address already in use!"))
-				.andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
-				.andExpect(status().is(400));
-	}
+        // expected 400 return http code
+        mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.message").value("Email Address already in use!"))
+                .andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
+                .andExpect(status().is(400));
+    }
 
-	/**
-	 * singup path test test with Username is already taken!
-	 * 
-	 * @throws Exception
-	 *             throwing exception if there is an error
-	 */
-	@Test
-	@WithAnonymousUser
-	public void singUpUserRegisterExistByUsernameTest() throws Exception {
+    /**
+     * singup path test test with Username is already taken!
+     *
+     * @throws Exception throwing exception if there is an error
+     */
+    @Test
+    @WithAnonymousUser
+    public void singUpUserRegisterExistByUsernameTest() throws Exception {
 
-		SignUpRequest singupRequest = this.dummyRegisterUser();
+        SignUpRequest singupRequest = this.dummyRegisterUser();
 
-		given(userServiceMock.existsByUserName(singupRequest.getUserName())).willReturn(true);
-		given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(false);
+        given(userServiceMock.existsByUserName(singupRequest.getUserName())).willReturn(true);
+        given(userServiceMock.existsByEmail(singupRequest.getEmail())).willReturn(false);
 
-		// request to endpoint
-		RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
-				.content(new ObjectMapper().writeValueAsString(singupRequest));
+        // request to endpoint
+        RequestBuilder requestBuilder = post(this.baseUrl + "/signup").contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(singupRequest));
 
-		// expected 400 return http code
-		mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
-				.andExpect(jsonPath("$.message").value("Username is already taken!"))
-				.andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
-				.andExpect(status().is(400));
-	}
+        // expected 400 return http code
+        mvc.perform(requestBuilder).andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.message").value("Username is already taken!"))
+                .andExpect(jsonPath("$.success").isBoolean()).andExpect(jsonPath("$.success").value(false))
+                .andExpect(status().is(400));
+    }
 }

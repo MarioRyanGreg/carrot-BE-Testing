@@ -39,8 +39,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	@ExceptionHandler(Exception.class)
 	public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
 		ErrorResponseBody response = new ErrorResponseBody(this.today, ex.getMessage(), request.getDescription(true));
-		logMe.error("Error in handleAllExceptions . Message - {}", ex.getMessage());
-		return new ResponseEntity(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		logMe.error("Error in handleAllExceptions . Message - {} - Details - {} ", ex.getMessage(), request.getDescription(true));
+		return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 	}
 
     /**
@@ -57,6 +57,6 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ErrorResponseBody response = new ErrorResponseBody(this.today, "Form validation failed " + request.getDescription(true), ex.getBindingResult().toString());
 		logMe.error("Error in handleMethodArgumentNotValid method : Message - {}", ex.getBindingResult().toString());
-		return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 }

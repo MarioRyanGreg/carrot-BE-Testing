@@ -58,7 +58,7 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "Get all user", notes = "Returns list of all Users in the database.", response = User.class)
     public ResponseEntity<Iterable<User>> all() {
-        return new ResponseEntity(userService.findAllBydeletedFalse(), HttpStatus.OK);
+        return new ResponseEntity<Iterable<User>>(userService.findAllBydeletedFalse(), HttpStatus.OK);
     }
 
     /**
@@ -90,7 +90,8 @@ public class UserController {
     public ResponseEntity<ApiResponse> delete(
             @ApiParam("Id of the person to be deleted. Cannot be empty.") @PathVariable Long id
     ) {
-        userService.deletedUserById(id);
+    	User user = userService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Data", "id", id));
+        userService.deleted(user);
         return new ResponseEntity<>(new ApiResponse(true, "Data id : " + id + " deleted successfully"), HttpStatus.OK);
     }
 
@@ -107,7 +108,7 @@ public class UserController {
             @CurrentUser UserPrincipal currentUser
     ) {
         UserSummary us = new UserSummary(currentUser.getId(), currentUser.getUsername(), currentUser.getName());
-        return new ResponseEntity<>(us, HttpStatus.OK);
+        return new ResponseEntity<UserSummary>(us, HttpStatus.OK);
     }
 
     /**
@@ -131,7 +132,7 @@ public class UserController {
                 user.getName(),
                 user.getCreatedTime()
         );
-        return new ResponseEntity(userProfile, HttpStatus.OK);
+        return new ResponseEntity<UserProfile>(userProfile, HttpStatus.OK);
     }
 
     /**
@@ -147,6 +148,7 @@ public class UserController {
             @ApiParam("Key of the user to be check. Cannot be empty.") @RequestParam(value = "key") String key,
             @ApiParam("Value of key to be check. Cannot be empty.") @RequestParam(value = "value") String value
     ) {
-        return userService.isUserAvailable(key, value);
+    	Boolean isAvailable = userService.isUserAvailable(key, value);
+        return new UserIdentityAvailability(isAvailable);
     }
 }

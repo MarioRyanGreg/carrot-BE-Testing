@@ -22,6 +22,10 @@ import com.mitrais.carrot.payload.ApiResponse;
 import com.mitrais.carrot.services.interfaces.ISharingLevelService;
 import com.mitrais.carrot.validation.exception.ResourceNotFoundException;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * SharingLevelController is a rest full controller for SharingLevel entity
  * 
@@ -31,6 +35,7 @@ import com.mitrais.carrot.validation.exception.ResourceNotFoundException;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "sharinglevel", description = "Crud service for SharingLevel")
 public class SharingLevelController {
 
 	@Autowired
@@ -43,6 +48,7 @@ public class SharingLevelController {
 	 */
 	@GetMapping("/sharing-levels")
 	@ResponseBody
+	@ApiOperation(value = "Get all SharingLevel", notes = "Returns list of all SharingLevel in the database.")
 	public Iterable<SharingLevel> all() {
 		return sharingLevelService.findAllBydeletedIsNull();
 	}
@@ -55,7 +61,9 @@ public class SharingLevelController {
 	 */
 	@PostMapping("/sharing-levels")
 	@ResponseBody
-	public ResponseEntity save(@Valid @RequestBody SharingLevel body) {
+	@ApiOperation(value = "Create new SharingLevel", notes = "Create new SharingLevel.")
+	public ResponseEntity save(
+			@ApiParam("Example Request body of SharingLevel. Cannot be empty.") @Valid @RequestBody SharingLevel body) {
 		sharingLevelService.save(body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);
 	}
@@ -69,7 +77,9 @@ public class SharingLevelController {
 	 */
 	@GetMapping("/sharing-levels/{id}")
 	@ResponseBody
-	public ResponseEntity<SharingLevel> show(@PathVariable Integer id) {
+	@ApiOperation(value = "Get one SharingLevel by id", notes = "Get specific SharingLevel by SharingLevel id.")
+	public ResponseEntity<SharingLevel> show(
+			@ApiParam("Id of the SharingLevel to be get. Cannot be empty.") @PathVariable Integer id) {
 		SharingLevel sharingLevel = sharingLevelService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Data", "id", id));
 		return new ResponseEntity<SharingLevel>(sharingLevel, HttpStatus.OK);
@@ -84,7 +94,10 @@ public class SharingLevelController {
 	 */
 	@PutMapping("/sharing-levels/{id}")
 	@ResponseBody
-	public ResponseEntity update(@PathVariable Integer id, @Valid @RequestBody SharingLevel body) {
+	@ApiOperation(value = "Update SharingLevel by id", notes = "Update SharingLevel data by SharingLevel id.")
+	public ResponseEntity update(
+			@ApiParam("Id of the SharingLevel to be update. Cannot be empty.") @PathVariable Integer id,
+			@ApiParam("Example Request body of SharingLevel. Cannot be empty.") @Valid @RequestBody SharingLevel body) {
 		SharingLevel shareLevel = sharingLevelService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Data", "id", id));
 		BeanUtils.copyProperties(body, shareLevel);
@@ -102,7 +115,9 @@ public class SharingLevelController {
 	 */
 	@DeleteMapping("/sharing-levels/{id}")
 	@ResponseBody
-	public ResponseEntity<?> delete(@PathVariable Integer id) {
+	@ApiOperation(value = "Delete SharingLevel by id", notes = "Delete SharingLevel by SharingLevel id, this system only mark deleted as true.")
+	public ResponseEntity<?> delete(
+			@ApiParam("Id of the SharingLevel to be update. Cannot be empty.") @PathVariable Integer id) {
 		SharingLevel sl = sharingLevelService.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Data", "id", id));
 		sl.setDeleted(true);

@@ -1,14 +1,14 @@
 package com.mitrais.carrot.config.jwt;
 
 import io.jsonwebtoken.*;
+
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * generate jwt token
@@ -21,12 +21,14 @@ public class JwtTokenProvider {
     /**
      * jwt expiration time
      */
-    private final String JWT_SECRET = "Carrot";
+    @Value("${app.jwtSecret}")
+    private String JWT_SECRET;
 
     /**
      * jwt expiration time
      */
-    private final long JWT_EXPIRATION_TIME = 64_000_000;
+    @Value("${app.jwtExpirationInMs}")
+    private int JWT_EXPIRATION_TIME;
 
     /**
      * logger

@@ -3,7 +3,6 @@ package com.mitrais.carrot.services;
 import com.mitrais.carrot.models.Role;
 import com.mitrais.carrot.models.User;
 import com.mitrais.carrot.payload.SignUpRequest;
-import com.mitrais.carrot.payload.UserIdentityAvailability;
 import com.mitrais.carrot.repositories.RoleRepository;
 import com.mitrais.carrot.repositories.UserRepository;
 import com.mitrais.carrot.services.interfaces.IUser;
@@ -248,13 +247,13 @@ public class UserService implements IUser {
      * @return UserIdentityAvailability object
      */
     @Override
-    public UserIdentityAvailability isUserAvailable(String key, String value) {
+    public Boolean isUserAvailable(String key, String value) {
         Boolean isAvailable = false;
         if ("username".equals(key)) {
             isAvailable = !userRepository.existsByUserName(value);
         } else if ("email".equals(key)) {
             isAvailable = !userRepository.existsByEmail(value);
         }
-        return new UserIdentityAvailability(isAvailable);
+        return isAvailable;
     }
 }

@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class BadRequestException extends RuntimeException {
 
 	/**
+	 * adding static serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * set error message
 	 * @param message error message
 	 */

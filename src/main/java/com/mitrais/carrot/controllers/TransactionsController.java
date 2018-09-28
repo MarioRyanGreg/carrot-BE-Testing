@@ -5,6 +5,8 @@ import com.mitrais.carrot.payload.ApiResponse;
 
 import com.mitrais.carrot.services.TransactionsService;
 import com.mitrais.carrot.utils.CustomErrorMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import javax.validation.Valid;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "transactions", description = "Crud service for transactions")
 public class TransactionsController {
 
     public TransactionsService transactionsService;
@@ -33,7 +36,7 @@ public class TransactionsController {
      */
     @GetMapping("/transactions")
     @ResponseBody
-
+    @ApiOperation(value = "Get all transactions", notes = "Returns list of all transaction in the database.")
     public Iterable<Transactions> all() {
         return transactionsService.findAll();
     }
@@ -46,6 +49,7 @@ public class TransactionsController {
      */
     @PostMapping("/transactions")
     @ResponseBody
+    @ApiOperation(value = "Create new transaction", notes = "Create new transaction.")
     public ResponseEntity<Transactions> save(@RequestBody @Valid Transactions body) {
         body = transactionsService.save(body);
         return new ResponseEntity(new ApiResponse( true, ""), HttpStatus.CREATED);
@@ -60,6 +64,7 @@ public class TransactionsController {
      */
     @GetMapping("/transactions/{id}")
     @ResponseBody
+    @ApiOperation(value = "Get one transaction by id", notes = "Get specific transaction by transaction id.")
     public Transactions detail(@PathVariable Integer id ){return  transactionsService.findById(id);}
 
 
@@ -72,6 +77,7 @@ public class TransactionsController {
      */
     @PutMapping("/transactions/{id}")
     @ResponseBody
+    @ApiOperation(value = "Update transaction by id", notes = "Update transaction data by transaction id.")
     public ResponseEntity<Transactions> update(@PathVariable Integer id , @Valid @RequestBody Transactions body){
         Transactions model = transactionsService.findById(id);
         BeanUtils.copyProperties(model, body);
@@ -88,6 +94,7 @@ public class TransactionsController {
      */
     @DeleteMapping("/transactions/{id}")
     @ResponseBody
+    @ApiOperation(value = "Delete transaction by id", notes = "Delete transaction by transaction id, this system only mark deleted as true.")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         Transactions trans = transactionsService.findById(id);
     trans.setDeleted(true);

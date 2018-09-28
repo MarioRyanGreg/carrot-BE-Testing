@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class AppException extends RuntimeException {
 
 	/**
+	 * adding static serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * set message of error
 	 * 
 	 * @param message message error

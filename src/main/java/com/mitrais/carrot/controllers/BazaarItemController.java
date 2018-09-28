@@ -20,6 +20,9 @@ import com.mitrais.carrot.models.BazaarItem;
 import com.mitrais.carrot.payload.ApiResponse;
 import com.mitrais.carrot.services.BazaarItemService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * BazarItemController is a rest full controller for BazaarItem entity
  * 
@@ -30,6 +33,7 @@ import com.mitrais.carrot.services.BazaarItemService;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "bazaaritem", description = "Crud service for BazaarItem")
 public class BazaarItemController {
 
 	public BazaarItemService bazaarItemService;
@@ -45,6 +49,7 @@ public class BazaarItemController {
 	 */
     @GetMapping("/bazaars-items")
     @ResponseBody
+    @ApiOperation(value = "Get all bazaar items", notes = "Returns list of all bazaar items in the database.")
     public Iterable<BazaarItem> all() {
         return bazaarItemService.findAll();
     }
@@ -57,6 +62,7 @@ public class BazaarItemController {
 	 */
     @PostMapping("/bazaars-items")
     @ResponseBody
+    @ApiOperation(value = "Create new bazaar item", notes = "Create new bazaar item.")
     public ResponseEntity<Void> save(@Valid @RequestBody BazaarItem body) {  
         bazaarItemService.save(body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);
@@ -70,6 +76,7 @@ public class BazaarItemController {
 	 */
     @GetMapping("/bazaars-items/{id}")
     @ResponseBody
+    @ApiOperation(value = "Get one bazaar item by id", notes = "Get specific bazaar item by bazaar item id.")
     public ResponseEntity<BazaarItem> detail(@PathVariable Integer id) {
         return new ResponseEntity<BazaarItem>(bazaarItemService.findById(id), HttpStatus.OK);
     }
@@ -83,6 +90,7 @@ public class BazaarItemController {
 	 */
     @PutMapping("/bazaars-items/{id}")
     @ResponseBody
+    @ApiOperation(value = "Update bazaar item by id", notes = "Update bazaar item data by bazaar item id.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody BazaarItem body) {        
         BazaarItem model = bazaarItemService.update(id, body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);
@@ -96,6 +104,7 @@ public class BazaarItemController {
 	 */
     @DeleteMapping("/bazaars-items/{id}")
     @ResponseBody
+    @ApiOperation(value = "Delete bazaar item by id", notes = "Delete bazaar item by bazaar item id, this system only mark deleted as true.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {      
         bazaarItemService.delete(id);
         return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);

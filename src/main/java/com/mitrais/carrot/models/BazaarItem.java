@@ -48,6 +48,7 @@ public class BazaarItem extends ModelAudit {
 	 * @param totalItem Total Item of Bazaar Item
 	 * @param autoApproveTransactions Auto Approve Transactions number of Bazaar Item
 	 * @param itemOnSale Number of Item On Sale of Bazaar Item
+	 * @param bazaar For managing relation from Bazaar Item to Bazaar
 	 */
 	public BazaarItem(Integer id, @NotNull String name, String description, String picture, Float exchangeRate,
 			Integer totalItem, Integer autoApproveTransactions, Integer itemOnSale, Bazaar bazaar) {

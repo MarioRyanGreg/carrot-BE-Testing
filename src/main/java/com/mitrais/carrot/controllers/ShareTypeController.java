@@ -20,6 +20,10 @@ import com.mitrais.carrot.models.ShareType;
 import com.mitrais.carrot.payload.ApiResponse;
 import com.mitrais.carrot.services.SharingTypeService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 /**
  * ShareTypeController is a rest full controller for ShareType entity
  * 
@@ -30,6 +34,7 @@ import com.mitrais.carrot.services.SharingTypeService;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "sharetype", description = "Crud service for shareType")
 public class ShareTypeController {
 
 	@Autowired
@@ -42,6 +47,7 @@ public class ShareTypeController {
 	 */
 	@GetMapping("/sharing-types")
 	@ResponseBody
+	@ApiOperation(value = "Get all ShareType", notes = "Returns list of all ShareType in the database.")
 	public Iterable<ShareType> all() {
 		return shareTypeService.findAll();
 	}
@@ -54,7 +60,9 @@ public class ShareTypeController {
 	 */
 	@PostMapping("/sharing-types")
 	@ResponseBody
-	public ResponseEntity<Void> save(@Valid @RequestBody ShareType body) {
+	@ApiOperation(value = "Create new ShareType", notes = "Create new ShareType.")
+	public ResponseEntity<Void> save(
+			@ApiParam("Example Request body of ShareType. Cannot be empty.") @Valid @RequestBody ShareType body) {
 		shareTypeService.save(body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);
 	}
@@ -67,7 +75,9 @@ public class ShareTypeController {
 	 */
 	@GetMapping("/sharing-types/{id}")
 	@ResponseBody
-	public ResponseEntity<ShareType> detail(@PathVariable Integer id) {
+	@ApiOperation(value = "Get one ShareType by id", notes = "Get specific ShareType by ShareType id.")
+	public ResponseEntity<ShareType> detail(
+			@ApiParam("Id of the ShareType to be get. Cannot be empty.") @PathVariable Integer id) {
 		return new ResponseEntity<ShareType>(shareTypeService.findById(id), HttpStatus.OK);
 	}
 
@@ -75,12 +85,15 @@ public class ShareTypeController {
 	 * update data
 	 * 
 	 * @param id   id selected from front-end
-	 * @param body udpated ShareType send from front-end
+	 * @param body updated ShareType send from front-end
 	 * @return ResponseEntity response status created
 	 */
 	@PutMapping("/sharing-types/{id}")
 	@ResponseBody
-	public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody ShareType body) {
+	@ApiOperation(value = "Update ShareType by id", notes = "Update ShareType data by ShareType id.")
+	public ResponseEntity<Void> update(
+			@ApiParam("Id of the ShareType to be update. Cannot be empty.") @PathVariable Integer id,
+			@ApiParam("Example Request body of ShareType. Cannot be empty.") @Valid @RequestBody ShareType body) {
 		ShareType model = shareTypeService.update(id, body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);
 	}
@@ -93,7 +106,9 @@ public class ShareTypeController {
 	 */
 	@DeleteMapping("/sharing-types/{id}")
 	@ResponseBody
-	public ResponseEntity<Void> delete(@PathVariable Integer id) {
+	@ApiOperation(value = "Delete ShareType by id", notes = "Delete ShareType by ShareType id, this system only mark deleted as true.")
+	public ResponseEntity<Void> delete(
+			@ApiParam("Id of the ShareType to be update. Cannot be empty.") @PathVariable Integer id) {
 		shareTypeService.delete(id);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);
 	}

@@ -20,6 +20,9 @@ import com.mitrais.carrot.models.Barn;
 import com.mitrais.carrot.payload.ApiResponse;
 import com.mitrais.carrot.services.BarnService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 
 /**
  * 
@@ -29,6 +32,7 @@ import com.mitrais.carrot.services.BarnService;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "Barn", description = "Crud service for Barn")
 public class BarnController {
 
     public BarnService barnService;
@@ -47,6 +51,7 @@ public class BarnController {
      */
     @GetMapping("/barns")
     @ResponseBody
+    @ApiOperation(value = "Get all barns", notes = "Returns list of all barns in the database.")
     public Iterable<Barn> all() {
         return barnService.findAll();
     }
@@ -58,6 +63,7 @@ public class BarnController {
      */
     @PostMapping("/barns")
     @ResponseBody
+    @ApiOperation(value = "Operation to save", notes = "Create new ")
     public ResponseEntity<Barn> save(@Valid @RequestBody Barn body) {
         barnService.save(body);
         return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);

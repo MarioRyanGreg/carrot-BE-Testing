@@ -25,7 +25,7 @@ public class BazaarService implements IBazaarService {
 	/**
 	 * the bazaar service constructor
 	 * 
-	 * @param bazaar the repository for bazar entity
+	 * @param bazaarRepository the repository for Bazaar entity
 	 */
 	public BazaarService(@Autowired BazaarRepository bazaarRepository) {
 		this.bazaarRepository = bazaarRepository;

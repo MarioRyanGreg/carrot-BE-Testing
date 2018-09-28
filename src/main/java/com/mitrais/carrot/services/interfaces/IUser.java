@@ -124,7 +124,7 @@ public interface IUser {
      * @param value value of key to be check
      * @return UserIdentityAvailability object
      */
-    public UserIdentityAvailability isUserAvailable(String key, String value);
+    public Boolean isUserAvailable(String key, String value);
 
     /**
      * custom delete by id

@@ -20,6 +20,9 @@ import com.mitrais.carrot.models.Bazaar;
 import com.mitrais.carrot.payload.ApiResponse;
 import com.mitrais.carrot.services.BazaarService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * BazaarController is a rest full controller for Bazaar entity
  * 
@@ -30,6 +33,7 @@ import com.mitrais.carrot.services.BazaarService;
 @CrossOrigin
 @RestController
 @RequestMapping("${spring.data.rest.basePath}")
+@Api(value = "bazaar", description = "Crud service for Bazaar")
 public class BazaarController {
 
 	public BazaarService bazaarService;
@@ -45,6 +49,7 @@ public class BazaarController {
 	 */
     @GetMapping("/bazaars")
     @ResponseBody
+    @ApiOperation(value = "Get all bazaars", notes = "Returns list of all bazaars in the database.")
     public Iterable<Bazaar> all() {
         return bazaarService.findAll();
     }
@@ -57,6 +62,7 @@ public class BazaarController {
 	 */
     @PostMapping("/bazaars")
     @ResponseBody
+    @ApiOperation(value = "Create new bazaar", notes = "Create new bazaar.")
     public ResponseEntity<Void> save(@Valid @RequestBody Bazaar body) {
     	bazaarService.save(body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);
@@ -70,7 +76,8 @@ public class BazaarController {
 	 */
     @GetMapping("/bazaars/{id}")
     @ResponseBody
-    public ResponseEntity<Bazaar> show(@PathVariable Integer id) {
+    @ApiOperation(value = "Get one bazaar by id", notes = "Get specific bazaar by bazaar id.")
+    public ResponseEntity<Bazaar> detail(@PathVariable Integer id) {
         return new ResponseEntity<Bazaar>(bazaarService.findById(id), HttpStatus.OK);
     }
 
@@ -83,6 +90,7 @@ public class BazaarController {
 	 */
     @PutMapping("/bazaars/{id}")
     @ResponseBody
+    @ApiOperation(value = "Update bazaar by id", notes = "Update bazaar data by bazaar id.")
     public ResponseEntity<Void> update(@PathVariable Integer id, @Valid @RequestBody Bazaar body) {
     	Bazaar model = bazaarService.update(id, body);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);
@@ -96,6 +104,7 @@ public class BazaarController {
 	 */
     @DeleteMapping("/bazaars/{id}")
     @ResponseBody
+    @ApiOperation(value = "Delete bazaar by id", notes = "Delete bazaar by bazaar id, this system only mark deleted as true.")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
     	bazaarService.delete(id);
 		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.OK);
